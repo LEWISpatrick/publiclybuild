@@ -16,7 +16,7 @@ const Page = () => {
 
   const handleFetchRepository = async () => {
     if (repoName.trim() === '') {
-      setError('Repository name cannot be empty');
+      setError('Repository name, cannot be empty');
       return;
     }
 
