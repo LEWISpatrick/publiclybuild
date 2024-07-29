@@ -11,8 +11,8 @@ import { AlertDemo } from '@/components/alert'
 const inter = Inter({ subsets: ['latin'] })
 
 export const metadata: Metadata = {
-  title: 'Nizzy-Starter',
-  description: 'The best SaaS starter kit on the web 🌎 🚀 HAHA'
+  title: 'PubliclyBuild',
+  description: 'The best way to build your SaaS in Public'
 }
 
 export default async function RootLayout({
@@ -27,9 +27,8 @@ export default async function RootLayout({
         <body className={inter.className}>
           <ThemeProvider
             attribute="class"
-            defaultTheme="system"
-            enableSystem
-            disableTransitionOnChange
+            defaultTheme="dark"
+    
           >
             <ToastProvider />
             <AlertDemo />

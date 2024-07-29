@@ -53,51 +53,11 @@ export function AlertDemo() {
             Heads up!
           </AlertTitle>
           <AlertDescription className="flex">
-            <p>This is a demo. You can get the github repository</p>
-            <Dialog>
-              <DialogTrigger asChild>
-                <p className="text-primary ml-1.5 underline cursor-pointer">
-                  here
-                </p>
-              </DialogTrigger>
-              <DialogContent className="rounded-lg sm:max-w-[425px] ">
-                <DialogHeader>
-                  <DialogTitle>Starter Kit</DialogTitle>
-                  <DialogDescription>
-                    Enter your email to get the starterkit link in your inbox
-                  </DialogDescription>
-                </DialogHeader>
-
-                <form onSubmit={handleSubmit}>
-                  <Label htmlFor="name" className="text-right mb-2">
-                    Email
-                  </Label>
-                  <Input
-                    onChange={(e) => setEmail(e.target.value)}
-                    name="email"
-                    id="email"
-                    type="email"
-                    required
-                    placeholder="tylerdurder@gmail.com"
-                    className="mt-3"
-                    value={email}
-                  />
-                  <DialogFooter>
-                    <Button type="submit" className="mt-4">
-                      Get The Starter Kit
-                    </Button>
-                  </DialogFooter>
-                </form>
-              </DialogContent>
-            </Dialog>
+            <p>$9.99 for the first 5 clients </p>
+          
           </AlertDescription>
         </div>
-        <Link href="/customize" className="mx-auto sm:mx-0">
-          <Button className="gap-2 text-foreground" variant="link">
-            <Palette className="w-5 h-5" />
-            Customize
-          </Button>
-        </Link>
+       
       </Alert>
     </div>
   )

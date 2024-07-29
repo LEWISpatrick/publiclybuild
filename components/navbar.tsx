@@ -7,17 +7,10 @@ import { Logo } from '@/components/logo'
 
 export const navPages = [
   {
-    title: 'Dashboard',
-    link: '/dashboard'
+    title: 'Plan',
+    link: '/plan'
   },
-  {
-    title: 'Pricing',
-    link: '/#pricing'
-  },
-  {
-    title: 'Items',
-    link: '/#items'
-  }
+ 
 ]
 
 export const Navbar = () => {
@@ -44,7 +37,6 @@ export const Navbar = () => {
               ))}
             </div>
             <div className="flex h-full gap-4">
-              <ModeToggle />
               <UserButton />
             </div>
           </div>

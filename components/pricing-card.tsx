@@ -10,43 +10,21 @@ import { useRouter } from 'next/navigation'
 // Update Tiers Here
 export const tiers = [
   {
-    name: 'Your Competitor Name',
-    price: '18.99',
-    features: [
-      'Feature 1',
-      'Feature 2',
-      'Feature 3',
-      'Feature 4',
-      'Feature 5',
-      'Feature 6',
-      'Feature 7',
-      'Feature 8',
-      'Feature 9',
-      'Feature 10'
-    ],
-    cta: 'Get Started',
-    yourProduct: false
-  },
-  {
-    name: 'Your Product Name',
+    name: 'PubliclyBuild',
     priceBefore: '$19.99',
-    price: '8.99',
+    price: '9.99',
     features: [
-      'Feature 1',
-      'Feature 2',
-      'Feature 3',
-      'Feature 4',
-      'Feature 5',
-      'Feature 6',
-      'Feature 7',
-      'Feature 8',
-      'Feature 9',
-      'Feature 10'
+      'Fetch Commits and Generate Content Plan for Twitter',
+      'Auto-Schedule Tweets',
+      'Customizable Tweet Templates',
+      'Advanced Scheduling Options',
+      'Priority Customer Support'
     ],
     cta: 'Get Started',
     yourProduct: true
   }
 ]
+
 
 export const PricingCard = () => {
   const [isLoading, setIsLoading] = useState(false)
@@ -57,7 +35,7 @@ export const PricingCard = () => {
   const onClick = async () => {
     if (!session) {
       toast('👇 Sign in to purchase!')
-      router.push('/login')
+      router.push('/register')
       return
     }
     try {
@@ -78,9 +56,8 @@ export const PricingCard = () => {
           Pricing
         </h2>
         <p className="text-md opacity-50 max-w-lg text-center">
-          Describe your product / service here that will impress the user & want
-          them to buy the product
-        </p>
+        Forget the manual process of Making Twitter posts. Reduce anxiety and focus on your startup with our 1-minute, no-code setup to generate posts and schedule them effortlessly.
+</p>
       </div>
       {/* Pricing Card Display */}
       <div className="flex flex-col sm:place-items-center md:flex-row items-center justify-center gap-6">

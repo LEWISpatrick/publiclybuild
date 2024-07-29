@@ -20,11 +20,11 @@ export async function POST(req: Request) {
     if (userSubscription && userSubscription.stripeCustomerId) {
       const stripeSession = await stripe.billingPortal.sessions.create({
         customer: userSubscription.stripeCustomerId,
-        return_url: process.env.APP_URL
-      })
-
-      return new NextResponse(JSON.stringify({ url: stripeSession.url }))
+        return_url: process.env.APP_URL || 'http://localhost:3000',
+      });
+      return new NextResponse(JSON.stringify({ url: stripeSession.url }));
     }
+
 
     const stripeSession = await stripe.checkout.sessions.create({
       success_url: process.env.APP_URL,
@@ -40,11 +40,11 @@ export async function POST(req: Request) {
           price_data: {
             currency: 'USD',
             product_data: {
-              name: 'Your SaaS Subscription Name',
-              description: 'Saas Subscription Description'
+              name: 'PubliclyBuild Subscription ',
+              description: 'Forget the manual process of Making Twitter posts. Reduce anxiety and focus on your startup with our 1-minute, no-code setup to generate posts and schedule them effortlessly.              '
             },
             // cost (change this to the price of your product)
-            unit_amount: 899,
+            unit_amount: 999,
             recurring: {
               interval: 'month'
             }

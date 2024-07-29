@@ -10,8 +10,12 @@ export const Footer = () => {
             <Logo />
           </Link>
           <span className="text-sm">
-            &copy; 2024 YourCompany. All rights reserved.
+            &copy; 2024 PubliclyBuild. All rights reserved.
           </span>
+          <Link
+          className='text-blue-500'
+          href='https://www.buildpublicly.dev/'
+          >Inspiration From Build-Publicly</Link>
         </div>
       </div>
     </footer>
