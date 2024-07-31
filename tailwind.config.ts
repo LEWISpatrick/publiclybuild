@@ -1,4 +1,4 @@
-import type { Config } from 'tailwindcss';
+import type { Config } from 'tailwindcss'
 
 const config: Config = {
   darkMode: ['class'],
@@ -30,7 +30,7 @@ const config: Config = {
         },
         foreground: 'hsl(var(--foreground))',
         primary: {
-          DEFAULT: '#7FDA58',
+          DEFAULT: 'hsl(var(--primary))',
           foreground: 'hsl(var(--primary-foreground))'
         },
         secondary: {
@@ -56,9 +56,7 @@ const config: Config = {
         card: {
           DEFAULT: 'hsl(var(--card))',
           foreground: 'hsl(var(--card-foreground))'
-        },
-        // Add a slightly lighter black color
-        'darker-gray': '#1c1b1b',
+        }
       },
       borderRadius: {
         lg: 'var(--radius)',
@@ -87,6 +85,5 @@ const config: Config = {
     }
   },
   plugins: [require('tailwindcss-animate')]
-};
-
-export default config;
+}
+export default config

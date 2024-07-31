@@ -53,7 +53,7 @@ export function AlertDemo() {
             Heads up!
           </AlertTitle>
           <AlertDescription className="flex">
-            <p>$9.99 for the first 5 clients </p>
+            <p>$4.99 for the first 5 clients </p>
           
           </AlertDescription>
         </div>

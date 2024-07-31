@@ -49,7 +49,7 @@ not Twitter Posts
 
           </h2>
           <p className="mt-4 text-lg text-foreground">
-          The best way to build your SaaS in Public
+          Use Your GitHub Commits to Create Engaging Content For Your Twitter.
 </p>
           <div className="flex justify-center lg:justify-start items-center mt-4">
             <Link href="/overview">

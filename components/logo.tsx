@@ -5,7 +5,7 @@ export const Logo = () => {
     <div className="flex items-center gap-2 group">
      
         <img
-        src='./publiclybuild.png'
+        src='./yourlogo.png'
         width='50'
         height='50'
         className='rounded-xl'

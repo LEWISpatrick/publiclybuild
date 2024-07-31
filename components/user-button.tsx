@@ -22,29 +22,20 @@ import Link from 'next/link'
 import { useRouter } from 'next/navigation'
 import { Button } from '@/components/ui/button'
 import { useEffect, useState } from 'react'
+import axios from 'axios'
+import { toast } from 'react-hot-toast'
 
 export const UserButton = () => {
+  const [isLoading, setIsLoading] = useState(false)
+
   const userButtonItems = [
-    {
-      label: 'Dashboard',
-      href: '/dashboard',
-      icon: LayoutDashboard
-    },
-    {
-      label: 'Docs',
-      href: '/docs',
-      icon: Book
-    },
+
+
     {
       label: 'Billing',
-      href: '/payments',
       icon: CreditCard
     },
-    {
-      label: 'Settings',
-      href: '/settings',
-      icon: Settings
-    }
+ 
   ]
   // Random gradient colors for Avatar
 
@@ -58,7 +49,18 @@ export const UserButton = () => {
     signOut()
     router.push('/login')
   }
-
+  const Payment = async () => {
+  
+    try {
+      setIsLoading(true)
+      const response = await axios.post('/api/checkout')
+      window.location.href = response.data.url
+    } catch (error) {
+      toast.error('An error occured! Please try again.')
+    } finally {
+      setIsLoading(false)
+    }
+  }
   return (
     <>
       {!session ? (
@@ -100,10 +102,10 @@ export const UserButton = () => {
             <DropdownMenuGroup>
               {userButtonItems.map((item, index) => (
                 <DropdownMenuItem key={index}>
-                  <Link href={item.href} className="flex">
+                  <button onClick={Payment} className="flex">
                     <item.icon className="mr-2 mt-0.5 h-4 w-4" />
                     <span>{item.label}</span>
-                  </Link>
+                  </button>
                 </DropdownMenuItem>
               ))}
             </DropdownMenuGroup>

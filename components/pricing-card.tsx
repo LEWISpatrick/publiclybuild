@@ -11,14 +11,12 @@ import { useRouter } from 'next/navigation'
 export const tiers = [
   {
     name: 'PubliclyBuild',
-    priceBefore: '$19.99',
-    price: '9.99',
+    priceBefore: '$9.99',
+    price: '4.99',
     features: [
-      'Fetch Commits and Generate Content Plan for Twitter',
-      'Auto-Schedule Tweets',
-      'Customizable Tweet Templates',
-      'Advanced Scheduling Options',
-      'Priority Customer Support'
+      'Fetch Commits and Generate Content for Twitter',
+      'Unlimited tweet generation',
+      'Auto-Post Tweets',
     ],
     cta: 'Get Started',
     yourProduct: true
@@ -40,6 +38,7 @@ export const PricingCard = () => {
     }
     try {
       setIsLoading(true)
+      toast.loading('💰 Opening Checkout/Portal')
       const response = await axios.post('/api/checkout')
       window.location.href = response.data.url
     } catch (error) {
