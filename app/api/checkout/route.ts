@@ -20,7 +20,7 @@ export async function POST(req: Request) {
     if (userSubscription && userSubscription.stripeCustomerId) {
       const stripeSession = await stripe.billingPortal.sessions.create({
         customer: userSubscription.stripeCustomerId,
-        return_url: process.env.APP_URL || 'http://localhost:3000',
+        return_url: process.env.APP_URL 
       });
       return new NextResponse(JSON.stringify({ url: stripeSession.url }));
     }
