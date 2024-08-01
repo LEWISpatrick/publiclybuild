@@ -116,9 +116,15 @@ const Page: React.FC = () => {
       const data = await response.json();
 
       if (response.ok) {
-        setTweet(data.tweet);
-        toast.dismiss();
-        toast.success('Tweet generated successfully!');
+        if (data.url) {
+          toast.dismiss();
+          toast('Must have a Subscription', { icon: '💳' });
+          window.location.href = data.url;
+        } else {
+          setTweet(data.tweet);
+          toast.dismiss();
+          toast.success('Tweet generated successfully!');
+        }
       } else {
         throw new Error(data.error || 'Failed to generate tweet');
       }
@@ -140,16 +146,17 @@ const Page: React.FC = () => {
 
   return (
     <div className='flex flex-col space-y-4 p-4'>
-      <h2 className="text-lg font-bold mt-4">Describe Your Product</h2>
+      <h2 className="text-lg font-bold mt-4">Describe Your Project/Commit</h2>
       <Input
         type="text"
         className="p-4 border rounded-lg h-32"
-        placeholder="Describe Your Project"
+        placeholder="Project is about how to drink water"
         size={50}
         value={projectDescription}
         onClick={Describe}
         onChange={(e) => setProjectDescription(e.target.value)}
       />
+      
       <h2 className="text-lg font-bold mt-4">Repository name</h2>
       <Input
         type="text"

@@ -1,5 +1,8 @@
+import { auth } from '@/auth';
+import { db } from '@/lib/db';
 import { NextResponse } from 'next/server';
 import OpenAI from 'openai';
+import { stripe } from '@/lib/stripe'
 
 const client = new OpenAI({
   apiKey: process.env['OPENAI_API_KEY'], // This is the default and can be omitted
@@ -7,16 +10,58 @@ const client = new OpenAI({
 
 export const POST = async (req: Request) => {
   const { projectDescription, commitMessage, commitDate } = await req.json();
-
-  const prompt = `
-    Generate a tweet about the following project and commit:
-    Project description: ${projectDescription}
-    Commit message: ${commitMessage}
-    Commit date: ${commitDate}
-    Make the Tweet sound like a human.
-  `;
-
   try {
+    const user = await auth();
+
+    if (!user || !user.user.id) {
+      return new NextResponse('Unauthorized', { status: 401 });
+    }
+
+    const userSubscription = await db.userSubscription.findUnique({
+      where: {
+        userId: user.user.id,
+      },
+    });
+
+    if (!userSubscription) {
+      const stripeSession = await stripe.checkout.sessions.create({
+        success_url: process.env.APP_URL,
+        cancel_url: process.env.APP_URL,
+        payment_method_types: ['card'],
+        mode: 'subscription',
+        billing_address_collection: 'auto',
+        customer_email: user?.user.email!,
+        line_items: [
+          {
+            price_data: {
+              currency: 'USD',
+              product_data: {
+                name: 'PubliclyBuild Subscription',
+                description: 'Generate Unlimited posts effortlessly with our 1-minute, no-code setup.',
+              },
+              unit_amount: 499,
+              recurring: {
+                interval: 'month',
+              },
+            },
+            quantity: 1,
+          },
+        ],
+        metadata: {
+          userId: user.user.id,
+        },
+      });
+      return NextResponse.json({ url: stripeSession.url });
+    }
+
+    const prompt = `
+      Generate a tweet about the following project and commit:
+      Project description / Commit Message Description: ${projectDescription}
+      Commit message: ${commitMessage}
+      Commit date: ${commitDate}
+      Make the Tweet sound like a human.
+    `;
+
     const response = await client.chat.completions.create({
       model: 'gpt-3.5-turbo',
       messages: [{ role: 'user', content: prompt }],
@@ -26,7 +71,9 @@ export const POST = async (req: Request) => {
 
     return NextResponse.json({ tweet });
   } catch (error) {
-    return NextResponse.json({ error: 'Failed to generate tweet' }, { status: 500 });
+    console.log('[STRIPE_GET]', error);
+    return new NextResponse('Internal Error', { status: 500 });
   }
 };
+
 

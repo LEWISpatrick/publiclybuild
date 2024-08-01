@@ -41,10 +41,10 @@ export async function POST(req: Request) {
             currency: 'USD',
             product_data: {
               name: 'PubliclyBuild Subscription ',
-              description: 'Forget the manual process of Making Twitter posts. Reduce anxiety and focus on your startup with our 1-minute, no-code setup to generate posts and schedule them effortlessly.              '
+              description: 'Generate Unlimited posts effortlessly with our 1-minute, no-code setup.'
             },
             // cost (change this to the price of your product)
-            unit_amount: 999,
+            unit_amount: 499,
             recurring: {
               interval: 'month'
             }
