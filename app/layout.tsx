@@ -7,7 +7,7 @@ import { ToastProvider } from '@/components/providers/toaster-provider'
 import { SessionProvider } from 'next-auth/react'
 import { auth } from '@/auth'
 import { AlertDemo } from '@/components/alert'
-
+import { Analytics } from "@vercel/analytics/react"
 const inter = Inter({ subsets: ['latin'] })
 
 export const metadata: Metadata = {
@@ -30,6 +30,7 @@ export default async function RootLayout({
             defaultTheme="dark"
     
           >
+            <Analytics/>
             <ToastProvider />
             <AlertDemo />
             <Navbar />
