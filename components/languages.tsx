@@ -52,7 +52,7 @@ const ArrowIcon = () => (
 
 const Languages = () => {
   return (
-    <div className=" h-46 mr-16 ml-16 pt-72">
+    <div className=" h-46 mr-16 ml-16 pt-64">
     <div className="flex justify-center  space-x-4 ">
       <GitHubIcon />
       <ArrowIcon />

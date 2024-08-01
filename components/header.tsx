@@ -26,7 +26,7 @@ const IframeWithSkeleton = () => {
 
   return (
     <>
-      {!iframeLoaded && <Skeleton className="w-full max-w-2xl h-auto aspect-video" />}
+      {!iframeLoaded && <Skeleton className="w-full max-w-2xl h-full  aspect-video" />}
       <iframe
         id="youtube-iframe"
         src="https://www.youtube.com/embed/Q6jDdtbkMIU?si=YtgU89RhYiwt5-U5"
@@ -40,7 +40,7 @@ const IframeWithSkeleton = () => {
 
 export const Header = () => {
   return (
-    <div className="space-y-20 mt-32">
+    <div className="space-y-20 mt-44">
       <div className="mx-auto grid grid-cols-1 lg:grid-cols-2 gap-8">
         <div className="flex flex-col justify-center text-center lg:text-left ">
           <h2 className="text-4xl font-extrabold sm:text-5xl">

@@ -3,12 +3,10 @@
 import React, { useState } from 'react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
-import axios from 'axios';
 import { useCurrentUser } from '@/hooks/use-current-user';
 import { toast } from 'react-hot-toast';
-import { useRouter } from 'next/router';
 
-const exampleRepos = ["facebook/react", "vercel/next.js", "tailwindlabs/tailwindcss"];
+const exampleRepos = ["No repositories available"];
 const exampleTweets = ["Tweet 1", "Tweet 2", "Tweet 3"];
 
 const Page: React.FC = () => {
@@ -25,6 +23,7 @@ const Page: React.FC = () => {
   const [projectDescription, setProjectDescription] = useState<string>('');
   const [repos, setRepos] = useState<string[]>(exampleRepos);
   const [commits, setCommits] = useState<any[]>([]);
+  const [selectedCommit, setSelectedCommit] = useState<any>(null);
   const [tweets, setTweets] = useState<string[]>(exampleTweets);
   const [loading, setLoading] = useState<boolean>(false);
 
@@ -36,26 +35,100 @@ const Page: React.FC = () => {
 
     setLoading(true);
     toast.loading('⏳ Fetching repositories!');
-    
+
     try {
-      const response = await axios.post('/api/repos', { repoName });
-      setRepos([response.data.full_name]);
+      const response = await fetch('/api/repos', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ repoName }),
+      });
+      const data = await response.json();
+
+      if (response.ok) {
+        setRepos([data.full_name]);
+        toast.dismiss();
+        toast.success('Repositories fetched successfully!');
+        await fetchCommits(data.full_name);
+      } else {
+        throw new Error(data.error || 'Failed to fetch repository');
+      }
+    } catch (error: any) {
       toast.dismiss();
-      toast.success('Repositories fetched successfully!');
-    } catch (error) {
-      toast.dismiss();
-      toast.error('Failed to fetch repository');
+      toast.error(error.message || 'Failed to fetch repository');
     } finally {
       setLoading(false);
     }
   };
 
-  const fetchCommits = async (repo: string) => {
-    // Implement fetching commits logic here
+  const fetchCommits = async (repoFullName: string) => {
+    setLoading(true);
+    toast.loading('⏳ Fetching commits!');
+
+    try {
+      const response = await fetch('/api/commits', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ repoFullName }),
+      });
+      const data = await response.json();
+
+      if (response.ok) {
+        setCommits(data);
+        toast.dismiss();
+        toast.success('Commits fetched successfully!');
+      } else {
+        throw new Error(data.error || 'Failed to fetch commits');
+      }
+    } catch (error: any) {
+      toast.dismiss();
+      toast.error(error.message || 'Failed to fetch commits');
+    } finally {
+      setLoading(false);
+    }
   };
 
-  const generateTweets = async (commit: any) => {
-    // Implement generating tweets logic here
+  const generateTweets = async () => {
+    if (!selectedCommit) {
+      toast.error('Please select a commit');
+      return;
+    }
+
+    const payload = {
+      projectDescription,
+      commitMessage: selectedCommit.commit.message,
+      commitDate: selectedCommit.commit.author.date,
+    };
+
+    setLoading(true);
+    toast.loading('⏳ Generating tweets!');
+
+    try {
+      const response = await fetch('/api/generate', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(payload),
+      });
+      const data = await response.json();
+
+      if (response.ok) {
+        setTweets(data.tweets);
+        toast.dismiss();
+        toast.success('Tweets generated successfully!');
+      } else {
+        throw new Error(data.error || 'Failed to generate tweets');
+      }
+    } catch (error: any) {
+      toast.dismiss();
+      toast.error(error.message || 'Failed to generate tweets');
+    } finally {
+      setLoading(false);
+    }
   };
 
   const Describe = async () => {
@@ -63,7 +136,7 @@ const Page: React.FC = () => {
   };
 
   return (
-    <div className="flex flex-col space-y-4 p-4">
+    <div className='flex flex-col space-y-4 p-4'>
       <h2 className="text-lg font-bold mt-4">Describe Your Product</h2>
       <Input
         type="text"
@@ -120,10 +193,11 @@ const Page: React.FC = () => {
               commits.map((commit, index) => (
                 <li
                   key={index}
-                  onClick={() => generateTweets(commit)}
+                  onClick={() => setSelectedCommit(commit)}
                   className="cursor-pointer hover:underline"
                 >
-                  {commit.message}
+                  <p>Message: {commit.commit.message}</p>
+                  <p>Date: {new Date(commit.commit.author.date).toLocaleString()}</p>
                 </li>
               ))
             ) : (
@@ -135,6 +209,9 @@ const Page: React.FC = () => {
 
       <div>
         <h2 className="text-lg font-bold mt-4">Generated Tweets</h2>
+        <Button className="p-4 mt-10 rounded-xl" onClick={generateTweets}>
+          Generate Tweets
+        </Button>
         <div className="space-y-4">
           {tweets.length > 0 ? (
             tweets.map((tweet, index) => (
