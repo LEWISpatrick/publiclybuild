@@ -10,7 +10,7 @@ export const Testimonials = () => {
     {
       name: 'John Doe',
       avatar: '/testimonials/john-doe.jpg',
-      message: 'Your genuine testimonials are important. Let us know how PubliclyBuild has helped with your social media management and reduced your workload. Contact us at patricklewis2009@gmail.com.'
+      message: 'Send me your review of publiclyBuild with your PFP at patricklewis2009@gmail.com.'
     },
   ]
 
