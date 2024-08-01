@@ -7,7 +7,6 @@ import { useCurrentUser } from '@/hooks/use-current-user';
 import { toast } from 'react-hot-toast';
 
 const exampleRepos = ["No repositories available"];
-const exampleTweets = ["Tweet 1", "Tweet 2", "Tweet 3"];
 
 const Page: React.FC = () => {
   const session = useCurrentUser();
@@ -24,7 +23,7 @@ const Page: React.FC = () => {
   const [repos, setRepos] = useState<string[]>(exampleRepos);
   const [commits, setCommits] = useState<any[]>([]);
   const [selectedCommit, setSelectedCommit] = useState<any>(null);
-  const [tweets, setTweets] = useState<string[]>(exampleTweets);
+  const [tweet, setTweet] = useState<string | null>(null);
   const [loading, setLoading] = useState<boolean>(false);
 
   const fetchRepos = async () => {
@@ -91,7 +90,7 @@ const Page: React.FC = () => {
     }
   };
 
-  const generateTweets = async () => {
+  const generateTweet = async () => {
     if (!selectedCommit) {
       toast.error('Please select a commit');
       return;
@@ -104,7 +103,7 @@ const Page: React.FC = () => {
     };
 
     setLoading(true);
-    toast.loading('⏳ Generating tweets!');
+    toast.loading('⏳ Generating tweet!');
 
     try {
       const response = await fetch('/api/generate', {
@@ -117,15 +116,15 @@ const Page: React.FC = () => {
       const data = await response.json();
 
       if (response.ok) {
-        setTweets(data.tweets);
+        setTweet(data.tweet);
         toast.dismiss();
-        toast.success('Tweets generated successfully!');
+        toast.success('Tweet generated successfully!');
       } else {
-        throw new Error(data.error || 'Failed to generate tweets');
+        throw new Error(data.error || 'Failed to generate tweet');
       }
     } catch (error: any) {
       toast.dismiss();
-      toast.error(error.message || 'Failed to generate tweets');
+      toast.error(error.message || 'Failed to generate tweet');
     } finally {
       setLoading(false);
     }
@@ -133,6 +132,10 @@ const Page: React.FC = () => {
 
   const Describe = async () => {
     toast.success('🔥 Describe Your Project Well!?');
+  };
+
+  const createTweetLink = (tweet: string) => {
+    return `https://x.com/intent/post?text=${encodeURIComponent(tweet)}`;
   };
 
   return (
@@ -208,23 +211,22 @@ const Page: React.FC = () => {
       </div>
 
       <div>
-        <h2 className="text-lg font-bold mt-4">Generated Tweets</h2>
-        <Button className="p-4 mt-10 rounded-xl" onClick={generateTweets}>
-          Generate Tweets
+        <h2 className="text-lg font-bold mt-4">Generated Tweet</h2>
+        <Button className="p-4 mt-10 rounded-xl" onClick={generateTweet}>
+          Generate Tweet
         </Button>
         <div className="space-y-4">
-          {tweets.length > 0 ? (
-            tweets.map((tweet, index) => (
-              <div
-                key={index}
-                className="p-4 border rounded-lg flex justify-between items-center"
-              >
-                <p>{tweet}</p>
+          {tweet ? (
+            <div
+              className="p-4 border rounded-lg flex justify-between items-center"
+            >
+              <p>{tweet}</p>
+              <a href={createTweetLink(tweet)} target="_blank" rel="noopener noreferrer">
                 <Button>Post</Button>
-              </div>
-            ))
+              </a>
+            </div>
           ) : (
-            <p className="text-gray-500 italic">No tweets generated</p>
+            <p className="text-gray-500 italic">No tweet generated</p>
           )}
         </div>
       </div>

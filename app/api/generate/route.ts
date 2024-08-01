@@ -9,11 +9,11 @@ export const POST = async (req: Request) => {
   const { projectDescription, commitMessage, commitDate } = await req.json();
 
   const prompt = `
-    Generate 3 tweets about the following project and commit:
+    Generate a tweet about the following project and commit:
     Project description: ${projectDescription}
     Commit message: ${commitMessage}
     Commit date: ${commitDate}
-    Make the Tweet Sound like a Human.
+    Make the Tweet sound like a human.
   `;
 
   try {
@@ -22,10 +22,11 @@ export const POST = async (req: Request) => {
       messages: [{ role: 'user', content: prompt }],
     });
 
-    const tweets = response.choices.map((choice: any) => choice.message?.content.trim());
+    const tweet = response.choices.map((choice: any) => choice.message?.content.trim());
 
-    return NextResponse.json({ tweets });
+    return NextResponse.json({ tweet });
   } catch (error) {
-    return NextResponse.json({ error: 'Failed to generate tweets' }, { status: 500 });
+    return NextResponse.json({ error: 'Failed to generate tweet' }, { status: 500 });
   }
 };
+
