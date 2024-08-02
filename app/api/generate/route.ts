@@ -1,11 +1,13 @@
+// app/api/generate/route.ts
+
 import { auth } from '@/auth';
 import { db } from '@/lib/db';
 import { NextResponse } from 'next/server';
 import OpenAI from 'openai';
-import { stripe } from '@/lib/stripe'
+import { stripe } from '@/lib/stripe';
 
 const client = new OpenAI({
-  apiKey: process.env['OPENAI_API_KEY'], // This is the default and can be omitted
+  apiKey: process.env['OPENAI_API_KEY'],
 });
 
 export const POST = async (req: Request) => {
@@ -17,13 +19,19 @@ export const POST = async (req: Request) => {
       return new NextResponse('Unauthorized', { status: 401 });
     }
 
-    const userSubscription = await db.userSubscription.findUnique({
-      where: {
-        userId: user.user.id,
-      },
+    const userRecord = await db.user.findUnique({
+      where: { id: user.user.id },
     });
 
-    if (!userSubscription) {
+    if (!userRecord) {
+      return new NextResponse('Unauthorized', { status: 401 });
+    }
+
+    const userSubscription = await db.userSubscription.findUnique({
+      where: { userId: user.user.id },
+    });
+
+    if (!userSubscription && userRecord.freeTweetsUsed >= 3) {
       const stripeSession = await stripe.checkout.sessions.create({
         success_url: process.env.APP_URL,
         cancel_url: process.env.APP_URL,
@@ -54,6 +62,13 @@ export const POST = async (req: Request) => {
       return NextResponse.json({ url: stripeSession.url });
     }
 
+    if (!userSubscription) {
+      await db.user.update({
+        where: { id: user.user.id },
+        data: { freeTweetsUsed: { increment: 1 } },
+      });
+    }
+
     const prompt = `
       Generate a tweet about the following project and commit:
       Project description / Commit Message Description: ${projectDescription}
@@ -75,5 +90,3 @@ export const POST = async (req: Request) => {
     return new NextResponse('Internal Error', { status: 500 });
   }
 };
-
-

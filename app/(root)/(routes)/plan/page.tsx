@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { useCurrentUser } from '@/hooks/use-current-user';
@@ -10,14 +10,6 @@ const exampleRepos = ["No repositories available"];
 
 const Page: React.FC = () => {
   const session = useCurrentUser();
-
-  if (!session) {
-    if (typeof window !== 'undefined') {
-      window.location.href = '/register';
-    }
-    return null;
-  }
-
   const [repoName, setRepoName] = useState<string>('');
   const [projectDescription, setProjectDescription] = useState<string>('');
   const [repos, setRepos] = useState<string[]>(exampleRepos);
@@ -25,6 +17,32 @@ const Page: React.FC = () => {
   const [selectedCommit, setSelectedCommit] = useState<any>(null);
   const [tweet, setTweet] = useState<string | null>(null);
   const [loading, setLoading] = useState<boolean>(false);
+  const [freeTweetsUsed, setFreeTweetsUsed] = useState<number>(0);
+  const [hasSubscription, setHasSubscription] = useState<boolean>(false);
+
+  useEffect(() => {
+    const fetchFreeTweetsCount = async () => {
+      try {
+        const response = await fetch('/api/freetweets');
+        if (!response.ok) throw new Error('Failed to fetch free tweets count');
+        const data = await response.json();
+        setFreeTweetsUsed(data.freeTweetsUsed);
+        setHasSubscription(data.hasSubscription); // Check if the user has a subscription
+      } catch (error: any) {
+        toast.error(error.message || 'Failed to fetch free tweets count');
+        console.log(error.message || 'Failed to fetch free tweets count');
+      }
+    };
+
+    fetchFreeTweetsCount();
+  }, []);
+
+  if (!session) {
+    if (typeof window !== 'undefined') {
+      window.location.href = '/register';
+    }
+    return null;
+  }
 
   const fetchRepos = async () => {
     if (!repoName) {
@@ -43,16 +61,12 @@ const Page: React.FC = () => {
         },
         body: JSON.stringify({ repoName }),
       });
+      if (!response.ok) throw new Error('Failed to fetch repository');
       const data = await response.json();
-
-      if (response.ok) {
-        setRepos([data.full_name]);
-        toast.dismiss();
-        toast.success('Repositories fetched successfully!');
-        await fetchCommits(data.full_name);
-      } else {
-        throw new Error(data.error || 'Failed to fetch repository');
-      }
+      setRepos([data.full_name]);
+      toast.dismiss();
+      toast.success('Repositories fetched successfully!');
+      await fetchCommits(data.full_name);
     } catch (error: any) {
       toast.dismiss();
       toast.error(error.message || 'Failed to fetch repository');
@@ -73,15 +87,11 @@ const Page: React.FC = () => {
         },
         body: JSON.stringify({ repoFullName }),
       });
+      if (!response.ok) throw new Error('Failed to fetch commits');
       const data = await response.json();
-
-      if (response.ok) {
-        setCommits(data);
-        toast.dismiss();
-        toast.success('Commits fetched successfully!');
-      } else {
-        throw new Error(data.error || 'Failed to fetch commits');
-      }
+      setCommits(data);
+      toast.dismiss();
+      toast.success('Commits fetched successfully!');
     } catch (error: any) {
       toast.dismiss();
       toast.error(error.message || 'Failed to fetch commits');
@@ -113,20 +123,19 @@ const Page: React.FC = () => {
         },
         body: JSON.stringify(payload),
       });
+      if (!response.ok) throw new Error('Failed to generate tweet');
       const data = await response.json();
-
-      if (response.ok) {
-        if (data.url) {
-          toast.dismiss();
-          toast('Must have a Subscription', { icon: '💳' });
-          window.location.href = data.url;
-        } else {
-          setTweet(data.tweet);
-          toast.dismiss();
-          toast.success('Tweet generated successfully!');
-        }
+      if (data.url) {
+        toast.dismiss();
+        toast('Must have a Subscription', { icon: '💳' });
+        window.location.href = data.url;
       } else {
-        throw new Error(data.error || 'Failed to generate tweet');
+        setTweet(data.tweet);
+        toast.dismiss();
+        toast.success('Tweet generated successfully!');
+        if (!hasSubscription) {
+          setFreeTweetsUsed((prev) => prev + 1);
+        }
       }
     } catch (error: any) {
       toast.dismiss();
@@ -222,6 +231,9 @@ const Page: React.FC = () => {
         <Button className="p-4 mt-10 rounded-xl" onClick={generateTweet}>
           Generate Tweet
         </Button>
+        {!hasSubscription && (
+          <p className="text-gray-500 mt-2">{`You have generated ${freeTweetsUsed}/3 free tweets`}</p>
+        )}
         <div className="space-y-4">
           {tweet ? (
             <div
