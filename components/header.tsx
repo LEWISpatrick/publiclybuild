@@ -29,8 +29,7 @@ const IframeWithSkeleton = () => {
       {!iframeLoaded && <Skeleton className="w-full max-w-2xl h-full  aspect-video" />}
       <iframe
         id="youtube-iframe"
-        src="https://www.youtube.com/embed/Q6jDdtbkMIU?si=YtgU89RhYiwt5-U5"
-        title="YouTube Video Player"
+        src="https://www.youtube.com/embed/FjqDG8p77ng?si=kCojjV0WTDiPriLk"                 title="YouTube Video Player"
         allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
         className={`w-full max-w-2xl h-auto aspect-video rounded-[6px] ${iframeLoaded ? '' : 'hidden'}`}
       ></iframe>
