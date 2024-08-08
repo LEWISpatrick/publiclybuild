@@ -11,7 +11,7 @@ const client = new OpenAI({
 });
 
 export const POST = async (req: Request) => {
-  const { projectDescription, commitMessage, commitDate } = await req.json();
+  const { projectDescription, commitMessage, commitDate, template } = await req.json();
   try {
     const user = await auth();
 
@@ -70,8 +70,9 @@ export const POST = async (req: Request) => {
     }
 
     const prompt = `
-      Generate a tweet about the following project and commit:
-      Project description / Commit Message Description: ${projectDescription}
+      Based on the following template, generate a tweet about the project and commit:
+      Template: ${template}
+      Project description: ${projectDescription}
       Commit message: ${commitMessage}
       Commit date: ${commitDate}
       Make the Tweet sound like a human.
