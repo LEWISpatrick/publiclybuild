@@ -15,7 +15,6 @@ export default function Home() {
         <PricingCard />
         <Testimonials />
       </main>
-      <Footer />
     </>
   )
 }

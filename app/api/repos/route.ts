@@ -7,15 +7,10 @@ interface Repository {
   id: number;
   full_name: string;
   name: string;
+  created_at: string;
 }
 
-export async function POST(request: Request) {
-  const { repoName } = await request.json();
-
-  if (!repoName || typeof repoName !== 'string') {
-    return NextResponse.json({ error: 'Repository name is required' }, { status: 400 });
-  }
-
+export async function GET() {
   try {
     const user = await auth();
 
@@ -33,18 +28,14 @@ export async function POST(request: Request) {
       return NextResponse.json({ error: 'User not found' }, { status: 404 });
     }
 
-    const response = await fetch(`https://api.github.com/repos/${User.name}/${repoName}`);
+    const response = await fetch(`https://api.github.com/users/${User.name}/repos`);
     if (!response.ok) {
-      throw new Error('Failed to fetch repository');
+      throw new Error('Failed to fetch repositories');
     }
-    const data: Repository | null = await response.json();
+    const data: Repository[] = await response.json();
 
-    if (data) {
-      return NextResponse.json(data, { status: 200 });
-    } else {
-      return NextResponse.json({ error: 'Repository not found' }, { status: 404 });
-    }
+    return NextResponse.json(data, { status: 200 });
   } catch (error) {
-    return NextResponse.json({ error: 'Error fetching repository' }, { status: 500 });
+    return NextResponse.json({ error: 'Error fetching repositories' }, { status: 500 });
   }
 }

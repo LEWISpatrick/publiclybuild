@@ -1,18 +1,18 @@
-'use client';
-
+// always add use client
+'use client'
 import React, { useState, useEffect } from 'react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
+import { Card } from '@/components/ui/card'; // Assuming you have a Card component
 import { useCurrentUser } from '@/hooks/use-current-user';
 import { toast } from 'react-hot-toast';
-
-const exampleRepos = ["No repositories available"];
 
 const Page: React.FC = () => {
   const session = useCurrentUser();
   const [repoName, setRepoName] = useState<string>('');
   const [projectDescription, setProjectDescription] = useState<string>('');
-  const [repos, setRepos] = useState<string[]>(exampleRepos);
+  const [repos, setRepos] = useState<any[]>([]);
+  const [currentRepoIndex, setCurrentRepoIndex] = useState<number>(0);
   const [commits, setCommits] = useState<any[]>([]);
   const [selectedCommit, setSelectedCommit] = useState<any>(null);
   const [tweet, setTweet] = useState<string | null>(null);
@@ -21,6 +21,25 @@ const Page: React.FC = () => {
   const [hasSubscription, setHasSubscription] = useState<boolean>(false);
 
   useEffect(() => {
+    const fetchRepos = async () => {
+      setLoading(true);
+      toast.loading('⏳ Fetching repositories!');
+
+      try {
+        const response = await fetch('/api/repos');
+        if (!response.ok) throw new Error('Failed to fetch repositories');
+        const data = await response.json();
+        setRepos(data);
+        toast.dismiss();
+        toast.success('Repositories fetched successfully!');
+      } catch (error: any) {
+        toast.dismiss();
+        toast.error(error.message || 'Failed to fetch repositories');
+      } finally {
+        setLoading(false);
+      }
+    };
+
     const fetchFreeTweetsCount = async () => {
       try {
         const response = await fetch('/api/freetweets');
@@ -34,6 +53,7 @@ const Page: React.FC = () => {
       }
     };
 
+    fetchRepos();
     fetchFreeTweetsCount();
   }, []);
 
@@ -43,37 +63,6 @@ const Page: React.FC = () => {
     }
     return null;
   }
-
-  const fetchRepos = async () => {
-    if (!repoName) {
-      toast.error('Please enter a repository name');
-      return;
-    }
-
-    setLoading(true);
-    toast.loading('⏳ Fetching repositories!');
-
-    try {
-      const response = await fetch('/api/repos', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({ repoName }),
-      });
-      if (!response.ok) throw new Error('Failed to fetch repository');
-      const data = await response.json();
-      setRepos([data.full_name]);
-      toast.dismiss();
-      toast.success('Repositories fetched successfully!');
-      await fetchCommits(data.full_name);
-    } catch (error: any) {
-      toast.dismiss();
-      toast.error(error.message || 'Failed to fetch repository');
-    } finally {
-      setLoading(false);
-    }
-  };
 
   const fetchCommits = async (repoFullName: string) => {
     setLoading(true);
@@ -153,56 +142,72 @@ const Page: React.FC = () => {
     return `https://x.com/intent/post?text=${encodeURIComponent(tweet)}`;
   };
 
-  return (
-    <div className='flex flex-col space-y-4 p-4'>
-      <h2 className="text-lg font-bold mt-4">Describe Your Project/Commit</h2>
-      <Input
-        type="text"
-        className="p-4 border rounded-lg h-32"
-        placeholder="Project is about how to drink water"
-        size={50}
-        value={projectDescription}
-        onClick={Describe}
-        onChange={(e) => setProjectDescription(e.target.value)}
-      />
-      
-      <h2 className="text-lg font-bold mt-4">Repository name</h2>
-      <Input
-        type="text"
-        placeholder="Enter repository name"
-        className="p-4 border rounded-lg"
-        value={repoName}
-        onChange={(e) => setRepoName(e.target.value)}
-      />
-      <p className="text-gray-500">Repository must be public</p>
-      <Button className="p-4 mt-10 rounded-xl" onClick={fetchRepos}>
-        Fetch Repository
-      </Button>
+  const displayRepos = repos.slice(currentRepoIndex, currentRepoIndex + 3);
 
+  const handleNext = () => {
+    if (currentRepoIndex + 3 < repos.length) {
+      setCurrentRepoIndex(currentRepoIndex + 3);
+    }
+  };
+
+  const handlePrevious = () => {
+    if (currentRepoIndex - 3 >= 0) {
+      setCurrentRepoIndex(currentRepoIndex - 3);
+    }
+  };
+
+  return (
+    <div className='flex flex-col space-y-4 max-w-xl  p-4'>
+      <h2 className="text-lg font-bold mt-4">Describe Your Project/Commit</h2>
+     
+      <textarea
+  className="p-4 border rounded-lg resize-none h-32"
+  placeholder="Project is about how to drink water"
+  value={projectDescription}
+  onClick={Describe}
+  onChange={(e) => setProjectDescription(e.target.value)}
+  rows={4} // Adjust the number of visible rows as needed
+/>
+{/* 
+<h2 className="text-lg font-bold mt-4">Any Specific Topic you want to talk about?</h2>
+<textarea
+  className="p-4 border rounded-lg resize-none h-32"
+  placeholder="I like to use <iframe/> from nextJs"
+  value={projectDescription}
+  onClick={Describe}
+  onChange={(e) => setProjectDescription(e.target.value)}
+/> */}
       <div>
         <h2 className="text-lg font-bold mt-4">Choose GitHub Repository</h2>
         {loading ? (
-          <p className="text-gray-500 italic">Loading...</p>
+          <p className=" italic">Loading...</p>
         ) : (
-          <ul className="list-disc pl-5">
-            {repos.length > 0 ? (
-              repos.map((repo, index) => (
-                <li
-                  key={index}
-                  onClick={() => fetchCommits(repo)}
-                  className="cursor-pointer hover:underline"
-                >
-                  {repo}
-                </li>
-              ))
-            ) : (
-              <p className="text-gray-500 italic">No repositories available</p>
-            )}
-          </ul>
+          <div className="relative p-4">
+          <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 mb-16">
+            {displayRepos.map((repo, index) => (
+              <Card key={index} className="p-4 border rounded-lg h-40"> {/* Set a fixed height */}
+                <div className="flex flex-col h-full justify-between">
+                  <div>
+                    <p className="text-lg font-bold">{repo.name}</p>
+                    <p className="text-sm">Created at: {new Date(repo.created_at).toLocaleDateString()}</p>
+                  </div>
+                  <Button onClick={() => fetchCommits(repo.full_name)}>Select</Button>
+                </div>
+              </Card>
+            ))}
+          </div>
+          <div className="absolute bottom-4 left-0 right-0 flex justify-between px-4">
+            <Button onClick={handlePrevious} disabled={currentRepoIndex === 0}>Previous</Button>
+            <Button onClick={handleNext} disabled={currentRepoIndex + 3 >= repos.length}>Next</Button>
+          </div>
+        </div>
+        
+        
         )}
       </div>
 
-      <div>
+
+<div>
         <h2 className="text-lg font-bold mt-4">Choose GitHub Commit</h2>
         {loading ? (
           <p className="text-gray-500 italic">Loading...</p>
@@ -226,13 +231,16 @@ const Page: React.FC = () => {
         )}
       </div>
 
+
+
+
       <div>
         <h2 className="text-lg font-bold mt-4">Generated Tweet</h2>
         <Button className="p-4 mt-10 rounded-xl" onClick={generateTweet}>
           Generate Tweet
         </Button>
         {!hasSubscription && (
-          <p className="text-gray-500 mt-2">{`You have generated ${freeTweetsUsed}/3 free tweets`}</p>
+          <p className=" mt-2">{`You have generated ${freeTweetsUsed}/3 free tweets`}</p>
         )}
         <div className="space-y-4">
           {tweet ? (

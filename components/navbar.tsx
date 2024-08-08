@@ -37,6 +37,8 @@ export const Navbar = () => {
               ))}
             </div>
             <div className="flex h-full gap-4">
+            <ModeToggle />
+
               <UserButton />
             </div>
           </div>

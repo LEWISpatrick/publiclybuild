@@ -34,7 +34,7 @@ const Tweet: React.FC = () => {
   return (
     <div className="p-6 max-w-4xl text-xl mx-auto shadow-lg rounded-lg">
       <div className="space-y-4">
-        {tweets.map((tweet) => (
+         {tweets.map((tweet) => (
           <div key={tweet.id} className="border-b pb-6">
             <h1 className='text-4xl mb-4'>{tweet.title}:</h1>
             {tweet.text.split('\n').map((paragraph, index) => (

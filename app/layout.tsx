@@ -8,6 +8,7 @@ import { SessionProvider } from 'next-auth/react'
 import { auth } from '@/auth'
 import { AlertDemo } from '@/components/alert'
 import { Analytics } from "@vercel/analytics/react"
+import { Footer } from '@/components/footer'
 const inter = Inter({ subsets: ['latin'] })
 
 export const metadata: Metadata = {
@@ -35,6 +36,8 @@ export default async function RootLayout({
             <AlertDemo />
             <Navbar />
             {children}
+            <Footer />
+
           </ThemeProvider>
         </body>
       </html>
