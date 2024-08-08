@@ -7,6 +7,7 @@ import RepositorySelector from '@/components/plan/RepositorySelector';
 import CommitSelector from '@/components/plan/CommitSelector';
 import TweetTemplateSelector from '@/components/plan/TweetTemplateSelector';
 import GeneratedTweet from '@/components/plan/GeneratedTweet';
+import { string } from 'zod';
 
 const Page: React.FC = () => {
   const session = useCurrentUser();
@@ -167,6 +168,9 @@ const Page: React.FC = () => {
         onChange={(e) => setProjectDescription(e.target.value)}
         rows={4}
       />
+   <div className='flex items-center justify-center'>
+    
+   </div>
 
       <RepositorySelector
         repos={repos}
@@ -182,14 +186,16 @@ const Page: React.FC = () => {
         setSelectedCommit={setSelectedCommit}
         loading={loading}
       />
-
+ 
       <TweetTemplateSelector
         tweetTemplates={tweetTemplates}
         selectedTemplate={selectedTemplate}
         setSelectedTemplate={setSelectedTemplate}
       />
 
-      <GeneratedTweet
+   <div className='flex items-center justify-center'>
+
+       <GeneratedTweet
         tweet={tweet}
         createTweetLink={createTweetLink}
         generateTweet={generateTweet}
@@ -197,7 +203,23 @@ const Page: React.FC = () => {
         hasSubscription={hasSubscription}
         selectedTemplate={selectedTemplate}
       />
-    </div>
+   </div>
+   
+
+      <div className='flex items-center justify-center mt-36'> <a
+        href="https://www.producthunt.com/products/publiclybuild/reviews?utm_source=badge-product_review&utm_medium=badge&utm_souce=badge-publiclybuild"
+        target="_blank"
+        rel="noopener noreferrer"
+      >
+        <img
+          src="https://api.producthunt.com/widgets/embed-image/v1/product_review.svg?product_id=598172&theme=light"
+          alt="PubliclyBuild - Transforms GitHub commits into Twitter/X Post | Product Hunt"
+          style={{ width: '250px', height: '54px' }}
+        />
+      </a></div>
+
+      
+          </div>
   );
 };
 
