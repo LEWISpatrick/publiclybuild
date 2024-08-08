@@ -53,8 +53,8 @@ const CommitSelector: React.FC<Props> = ({ commits, selectedCommit, setSelectedC
                 <li
                   key={index}
                   onClick={() => setSelectedCommit(commit)}
-                  className={`cursor-pointer p-2 mb-2 border rounded-lg hover:bg-gray-100 ${
-                    selectedCommit === commit ? 'bg-gray-200 font-bold' : ''
+                  className={`cursor-pointer p-2 mb-2 border rounded-lg hover:bg-gray-800 ${
+                    selectedCommit === commit ? 'bg-gray-900 font-bold' : ''
                   }`}
                 >
                   <p>Message: {commit.commit.message}</p>
