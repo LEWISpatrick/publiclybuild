@@ -1,32 +1,52 @@
-import React from 'react';
-import { Button } from '@/components/ui/button';
-import { Card } from '@/components/ui/card';
+import React, { useState } from 'react';
 
-interface Props {
-  tweetTemplates: string[];
-  selectedTemplate: number | null;
-  setSelectedTemplate: (index: number) => void;
-}
+type TweetTemplateSelectorProps = {
+  tweetTemplates: {
+    [key: string]: string[];
+  };
+  onTemplateSelect: (index: number) => void; // Add this prop to handle template selection
+};
 
-const TweetTemplateSelector: React.FC<Props> = ({ tweetTemplates, selectedTemplate, setSelectedTemplate }) => {
+const TweetTemplateSelector: React.FC<TweetTemplateSelectorProps> = ({ tweetTemplates, onTemplateSelect }) => {
+  const [selectedType, setSelectedType] = useState<string>(Object.keys(tweetTemplates)[0]);
+  const [searchTerm, setSearchTerm] = useState<string>('');
+
+  const filteredTemplates = tweetTemplates[selectedType].filter((template) =>
+    template.toLowerCase().includes(searchTerm.toLowerCase())
+  );
+
   return (
     <div>
-      <h2 className="text-lg font-bold mt-4">Select a Tweet Template</h2>
-      <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 mb-16">
-        {tweetTemplates.map((template, index) => (
-          <Card
+              <h2 className="text-lg font-bold mt-4">Choose Template</h2>
+ <input
+        type="text"
+        value={searchTerm}
+        onChange={(e) => setSearchTerm(e.target.value)}
+        placeholder="Search templates..."
+        className="p-2 border max-w-xs rounded-lg w-full mr-5"
+
+      />
+                    <h2 className="text-lg font-bold mt-4">Choose Template Type</h2>
+
+      <select value={selectedType} onChange={(e) => setSelectedType(e.target.value)}>
+        {Object.keys(tweetTemplates).map((type) => (
+          <option key={type} value={type}>
+            {type}
+          </option>
+        ))}
+      </select>
+
+     
+
+      <div>
+        {filteredTemplates.map((template, index) => (
+          <div
             key={index}
-            className={`p-4 border rounded-lg h-40 ${
-              selectedTemplate === index ? 'border-blue-500' : ''
-            }`}
+            onClick={() => onTemplateSelect(index)} // Call the onTemplateSelect function when a template is clicked
+            className="cursor-pointer p-2 hover:bg-gray-900"
           >
-            <div className="flex flex-col h-full justify-between">
-              <p>{template}</p>
-              <Button onClick={() => setSelectedTemplate(index)} disabled={selectedTemplate === index}>
-                {selectedTemplate === index ? 'Selected' : 'Choose Template'}
-              </Button>
-            </div>
-          </Card>
+            {template}
+          </div>
         ))}
       </div>
     </div>
