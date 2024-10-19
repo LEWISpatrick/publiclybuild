@@ -7,62 +7,66 @@ import { Button } from '@/components/ui/button'
 import { Skeleton } from '@/components/ui/skeleton'
 
 const IframeWithSkeleton = () => {
-  const [iframeLoaded, setIframeLoaded] = useState(false);
+  const [iframeLoaded, setIframeLoaded] = useState(false)
 
   useEffect(() => {
-    const iframe = document.getElementById('youtube-iframe') as HTMLIFrameElement;
+    const iframe = document.getElementById(
+      'youtube-iframe'
+    ) as HTMLIFrameElement
     if (iframe) {
       const handleIframeLoad = () => {
-        setIframeLoaded(true);
-      };
+        setIframeLoaded(true)
+      }
 
-      iframe.addEventListener('load', handleIframeLoad);
+      iframe.addEventListener('load', handleIframeLoad)
 
       return () => {
-        iframe.removeEventListener('load', handleIframeLoad);
-      };
+        iframe.removeEventListener('load', handleIframeLoad)
+      }
     }
-  }, []);
+  }, [])
 
   return (
-    <>
-      {!iframeLoaded && <Skeleton className="w-full max-w-2xl h-full  aspect-video" />}
+    <div className="relative w-full aspect-video rounded-lg overflow-hidden shadow-lg">
+      {!iframeLoaded && <Skeleton className="absolute inset-0" />}
       <iframe
         id="youtube-iframe"
-        src="https://www.youtube.com/embed/FjqDG8p77ng?si=kCojjV0WTDiPriLk"                 title="YouTube Video Player"
+        src="https://www.youtube.com/embed/FjqDG8p77ng?si=kCojjV0WTDiPriLk"
+        title="YouTube Video Player"
         allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
-        className={`w-full max-w-2xl h-auto aspect-video rounded-[6px] ${iframeLoaded ? '' : 'hidden'}`}
+        className={`absolute inset-0 w-full h-full ${iframeLoaded ? '' : 'invisible'}`}
       ></iframe>
-    </>
-  );
-};
+    </div>
+  )
+}
 
 export const Header = () => {
   return (
-    <div className="space-y-20 mt-44">
-      <div className="mx-auto grid grid-cols-1 lg:grid-cols-2 gap-8">
-        <div className="flex flex-col justify-center text-center lg:text-left ">
-          <h2 className="text-4xl font-extrabold sm:text-5xl">
-          Focus on your startup,
-not Twitter Posts
-
-          </h2>
-          <p className="mt-4 text-lg text-foreground">
-          Use Your GitHub Commits to Create Engaging Content For Your Twitter.
-</p>
-          <div className="flex justify-center lg:justify-start items-center mt-4">
+    <section className="py-20 lg:py-32 overflow-hidden">
+      <div className="container mx-auto px-4">
+        <div className="flex flex-col lg:flex-row items-center gap-12 lg:gap-20">
+          <div className="w-full lg:w-1/2">
+            <IframeWithSkeleton />
+          </div>
+          <div className="w-full lg:w-1/2 space-y-8">
+            <h1 className="text-4xl lg:text-5xl font-bold leading-tight">
+              Focus on your startup,
+              <br />
+              not Twitter Posts
+            </h1>
+            <p className="text-xl text-muted-foreground">
+              Use Your GitHub Commits to Create Engaging Content For Your
+              Twitter.
+            </p>
             <Link href="/register">
-              <Button className="gap-2">
-                <Sparkles className="h-5 w-5" />
+              <Button className="group text-lg px-6 py-3 rounded-full transition-all duration-300 ease-in-out transform hover:scale-105 hover:shadow-lg">
+                <Sparkles className="h-5 w-5 mr-2 transition-transform group-hover:rotate-12" />
                 <span>Get Started</span>
               </Button>
             </Link>
           </div>
         </div>
-        <div className="flex items-center justify-center rounded-lg overflow-hidden">
-          <IframeWithSkeleton />
-        </div>
       </div>
-    </div>
+    </section>
   )
 }

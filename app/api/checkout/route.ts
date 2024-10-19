@@ -17,37 +17,27 @@ export async function POST(req: Request) {
       }
     })
 
-    if (userSubscription && userSubscription.stripeCustomerId) {
-      const stripeSession = await stripe.billingPortal.sessions.create({
-        customer: userSubscription.stripeCustomerId,
-        return_url: process.env.APP_URL 
-      });
-      return new NextResponse(JSON.stringify({ url: stripeSession.url }));
+    if (userSubscription) {
+      return new NextResponse('Already purchased', { status: 400 })
     }
-
 
     const stripeSession = await stripe.checkout.sessions.create({
       success_url: process.env.APP_URL,
       cancel_url: process.env.APP_URL,
       payment_method_types: ['card'],
-
-      mode: 'subscription',
+      mode: 'payment',
       billing_address_collection: 'auto',
       customer_email: user?.user.email!,
-
       line_items: [
         {
           price_data: {
             currency: 'USD',
             product_data: {
-              name: 'PubliclyBuild Subscription ',
-              description: 'Generate Unlimited posts effortlessly with our 1-minute, no-code setup.'
+              name: 'PubliclyBuild One-Time Purchase',
+              description:
+                'Generate Unlimited posts effortlessly with our no-code setup.'
             },
-            // cost (change this to the price of your product)
-            unit_amount: 499,
-            recurring: {
-              interval: 'month'
-            }
+            unit_amount: 999
           },
           quantity: 1
         }

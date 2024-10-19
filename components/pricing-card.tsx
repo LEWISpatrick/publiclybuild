@@ -11,24 +11,23 @@ import { useRouter } from 'next/navigation'
 export const tiers = [
   {
     name: 'PubliclyBuild',
-    priceBefore: '$9.99',
-    price: '4.99',
+    priceBefore: '$39.99',
+    price: '9.99',
     features: [
       'Fetch Commits and Generate Content for Twitter',
       'Unlimited tweet generation',
-      'Auto-Post Tweets',
+      'Auto-Post Tweets'
     ],
     cta: 'Get Started',
     yourProduct: true
   }
 ]
 
-
 export const PricingCard = () => {
   const [isLoading, setIsLoading] = useState(false)
   const session = useCurrentUser()
 
-  const router = useRouter();
+  const router = useRouter()
 
   const onClick = async () => {
     if (!session) {
@@ -55,8 +54,10 @@ export const PricingCard = () => {
           Pricing
         </h2>
         <p className="text-md opacity-50 max-w-lg text-center">
-        Forget the manual process of Making Twitter posts. Reduce anxiety and focus on your startup with our 1-minute, no-code setup to generate posts and schedule them effortlessly.
-</p>
+          Forget the manual process of Making Twitter posts. Reduce anxiety and
+          focus on your startup with our 1-minute, no-code setup to generate
+          posts and schedule them effortlessly.
+        </p>
       </div>
       {/* Pricing Card Display */}
       <div className="flex flex-col sm:place-items-center md:flex-row items-center justify-center gap-6">
@@ -93,7 +94,7 @@ export const PricingCard = () => {
                     {tier.priceBefore}
                   </span>
                 ) : null}
-                <span className="text-4xl font-bold">${tier.price}</span> /month
+                <span className="text-4xl font-bold">${tier.price}</span>
               </div>
               <ul className="mt-4 space-y-2.5">
                 {tier.features.map((feature, index) => (
@@ -122,6 +123,9 @@ export const PricingCard = () => {
                 <Sparkle className="ml-1 h-4 w-4" />
               </Button>
             </div>
+            <p className="text-sm text-foreground/70 mt-2 text-center">
+              One-time payment. Yours to keep forever.
+            </p>
           </div>
         ))}
       </div>
